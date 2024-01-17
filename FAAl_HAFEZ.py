@@ -43,7 +43,7 @@ def show_web_content(url, width=800, height=600):
     modified_content = exclude_elements_by_id(content, id_to_exclude='t6e-footer')
     modified_content = exclude_elements(modified_content, elements_to_exclude)
     soup = BeautifulSoup(modified_content, 'html.parser')
-    text_content = soup.get_text()
+    text_content = soup.get_text().strip()
     text_widget.insert(tk.END, text_content)
     root.mainloop()
 
