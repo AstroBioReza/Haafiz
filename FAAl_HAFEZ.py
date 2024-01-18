@@ -35,7 +35,7 @@ def show_web_content(url, width=800, height=600):
     root = tk.Tk()
     root.title(f"غزل شمارۀ {Answer}")
     root.geometry(f"{width}x{height}")
-    text_widget = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=100, height=40)
+    text_widget = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=100, height=40, font= ("Tahoma", 12))
     text_widget.pack(expand=True, fill="both")
     content = get_web_content(url)
     
