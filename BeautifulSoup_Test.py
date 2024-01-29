@@ -1,7 +1,6 @@
+#let's take some interpretation for the Hafiz's poems!
 import requests
 from bs4 import BeautifulSoup
-
-#let's take some interpretation for the Hafiz's poems!
 
 def get_interpretation(URL):
     page = requests.get(URL)
@@ -12,6 +11,6 @@ def get_interpretation(URL):
     elements = soup.find_all(class_=desired_class)
     for element in elements:
         print(element.get_text().strip())
-URL = "https://satinmod.com/ghazal-494/"  
+URL = "https://satinmod.com/ghazal-494/"  #sample Address
 get_interpretation(URL)
 
