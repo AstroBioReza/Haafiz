@@ -37,7 +37,7 @@ def get_interpretation(URL):
     if page.status_code != 200:
         return "Failed to fetch page. Status code:", page.status_code
     soup = BeautifulSoup(page.content, "html.parser")
-    desired_class = "wp-block-group gtafsir-hafez is-layout-constrained wp-block-group-is-layout-constrained"
+    desired_class = "wp-block-group gtafsir-hafez"
     elements = soup.find_all(class_=desired_class)
     interpretations = []
     for element in elements:
