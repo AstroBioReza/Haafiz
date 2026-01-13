@@ -50,6 +50,7 @@ def show_both_contents(url, URL,  width=800, height=600):
     root.geometry(f"{width}x{height}")
     text_widget = scrolledtext.ScrolledText(root, wrap=tk.WORD, width=100, height=40, font= ("Tahoma", 12))
     text_widget.pack(expand=True, fill="both")
+    text_widget.tag_configure("rtl", justify="right")
     content = get_web_content(url)
     interpretation_content = get_interpretation(URL)
 
@@ -59,8 +60,12 @@ def show_both_contents(url, URL,  width=800, height=600):
     soup = BeautifulSoup(modified_content, 'html.parser')
     text_content = soup.get_text().strip()
     text_widget.insert(tk.END, f"\n{text_content}\n\nتعبیر:\n")
-    for interpretation in interpretation_content:
-        text_widget.insert(tk.END, f"{interpretation}\n")
+    persian_digits = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '۱۰']
+    rlm = "\u200f"  # Right-to-left mark to keep numbers on the right
+    for idx, interpretation in enumerate(interpretation_content, start=1):
+        digit = persian_digits[idx - 1] if idx - 1 < len(persian_digits) else str(idx)
+        text_widget.insert(tk.END, f"{rlm}{digit}. {interpretation}\n")
+    text_widget.tag_add("rtl", "1.0", "end")
     root.mainloop()
 
 show_both_contents(url, URL, width=800, height=600)
