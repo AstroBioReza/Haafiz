@@ -88,7 +88,7 @@
             const numberedInterpretations = interpretations.map((text, idx) => `${persianDigits[idx] || (idx + 1)}. ${text}`);
             const interpretationText = numberedInterpretations.join('\n\n');
 
-            const displayHTML = `<pre>${textContent}</pre><hr><h3>تعبیر:</h3><pre>${interpretationText}</pre>`;
+            const displayHTML = `<h2 style="text-align: center;">${document.title}</h2><pre>${textContent}</pre><hr><h3>تعبیر:</h3><pre>${interpretationText}</pre>`;
 
             displayContent(displayHTML);
             startButton.disabled = false; // Re-enable if you want to allow re-clicks
