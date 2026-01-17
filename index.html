@@ -60,7 +60,6 @@
     <script>
         const startButton = document.getElementById('startButton');
         startButton.addEventListener('click', main);
-
         async function main() {
             startButton.disabled = true; // Disable button while processing
             const All = Array.from({length: 495}, (_, i) => i + 1);
@@ -68,32 +67,34 @@
             const FAAL = Answer + 2129;
             const url = `https://ganjoor.net/t6e?p=${FAAL}`;
             const URL = `https://satinmod.com/ghazal-${Answer}`;
-
-            document.title = `غزل شمارۀ ${Answer}`;
-
+            const paddedAnswer = String(Answer).padStart(3, '0');
+            const URL2 = `https://hafez-fal.ir/ghazal/${paddedAnswer}`;
+            document.title = `غزل شمارۀ ${toPersianNum(Answer)}`;
             const content = await getWebContent(url);
             if (content.startsWith("Error")) {
                 displayContent(content);
                 startButton.disabled = false;
                 return;
             }
-
             let modifiedContent = excludeElementsById(content, 't6e-footer');
             modifiedContent = excludeElements(modifiedContent, ['head', 'a', 'script']);
             const textContent = getTextFromHtml(modifiedContent).trim();
-
-            const interpretations = await getInterpretation(URL);
+            const interpretations = await getInterpretationSatinmod(URL);
+            const interpretationHafezFal = await getInterpretationHafezFal(URL2);
+            // Combine all interpretations
+            const allInterpretations = [...interpretations, interpretationHafezFal];
             // Add Persian numbering to each interpretation paragraph
             const persianDigits = ['۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹', '۱۰'];
-            const numberedInterpretations = interpretations.map((text, idx) => `${persianDigits[idx] || (idx + 1)}. ${text}`);
+            const numberedInterpretations = allInterpretations.map((text, idx) => `${persianDigits[idx] || (idx + 1)}. ${text}`);
             const interpretationText = numberedInterpretations.join('\n\n');
-
             const displayHTML = `<h2 style="text-align: center;">${document.title}</h2><pre>${textContent}</pre><hr><h3>تعبیر:</h3><pre>${interpretationText}</pre>`;
-
             displayContent(displayHTML);
             startButton.disabled = false; // Re-enable if you want to allow re-clicks
         }
-
+        function toPersianNum(num) {
+            const persianDigits = '۰۱۲۳۴۵۶۷۸۹'.split('');
+            return num.toString().split('').map(digit => persianDigits[digit]).join('');
+        }
         async function getWebContent(url) {
             try {
                 const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
@@ -106,7 +107,6 @@
                 return `Error fetching content: ${e.message}`;
             }
         }
-
         function excludeElements(htmlContent, elementsToExclude) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlContent, 'text/html');
@@ -116,7 +116,6 @@
             });
             return doc.documentElement.outerHTML;
         }
-
         function excludeElementsById(htmlContent, idToExclude) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlContent, 'text/html');
@@ -126,8 +125,7 @@
             }
             return doc.documentElement.outerHTML;
         }
-
-        async function getInterpretation(URL) {
+        async function getInterpretationSatinmod(URL) {
             try {
                 const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(URL)}`;
                 const response = await fetch(proxyUrl);
@@ -137,24 +135,49 @@
                 const html = await response.text();
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
-                const desiredClass = "wp-block-group.gtafsir-hafez";
+                const desiredClass = 'wp-block-group gtafsir-hafez';
                 const elements = doc.querySelectorAll(`.${desiredClass}`);
                 const interpretations = [];
-                elements.forEach(el => {
-                    interpretations.push(el.textContent.trim());
+                elements.forEach(element => {
+                    interpretations.push(element.textContent.trim());
                 });
-                return interpretations;
+                return interpretations.length > 0 ? interpretations : ['تعبیری یافت نشد'];
             } catch (e) {
                 return [`Error: ${e.message}`];
             }
         }
-
+        async function getInterpretationHafezFal(URL2) {
+            try {
+                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(URL2)}`;
+                const response = await fetch(proxyUrl);
+                if (!response.ok) {
+                    return `Failed to fetch page. Status code: ${response.status}`;
+                }
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                // Find all <p> elements and filter out footer/credit lines
+                const allP = doc.querySelectorAll('p');
+                if (allP.length > 0) {
+                    // Iterate from the last to find a valid interpretation (skip footer elements)
+                    for (let i = allP.length - 1; i >= 0; i--) {
+                        const text = allP[i].textContent.trim();
+                        // Skip if it contains common footer/credit phrases
+                        if (text && !text.toLowerCase().includes('powered') && !text.toLowerCase().includes('mira')) {
+                            return text;
+                        }
+                    }
+                }
+                return 'تعبیری یافت نشد';
+            } catch (e) {
+                return `Error: ${e.message}`;
+            }
+        }
         function getTextFromHtml(htmlContent) {
             const parser = new DOMParser();
             const doc = parser.parseFromString(htmlContent, 'text/html');
             return doc.body.textContent || "";
         }
-
         function displayContent(html) {
             const container = document.getElementById('container');
             container.innerHTML = html;
