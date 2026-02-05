@@ -117,7 +117,7 @@
 
         async function getWebContent(url) {
             try {
-                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(url)}`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
                 const response = await fetch(proxyUrl);
                 if (!response.ok) throw new Error(`Status: ${response.status}`);
                 return await response.text();
@@ -150,7 +150,7 @@
         // ────────────────────────────────────────────────
         async function getInterpretationSatinmod(URL) {
             try {
-                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(URL)}`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(URL)}`;
                 const response = await fetch(proxyUrl);
                 if (!response.ok) {
                     return [`خطا در بارگذاری صفحه: ${response.status}`];
@@ -178,7 +178,7 @@
 
         async function getInterpretationHafezFal(URL2) {
             try {
-                const proxyUrl = `https://corsproxy.io/?${encodeURIComponent(URL2)}`;
+                const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(URL2)}`;
                 const response = await fetch(proxyUrl);
                 if (!response.ok) return `خطا در بارگذاری: ${response.status}`;
 
