@@ -9,6 +9,7 @@ Answer = random.choice(All)
 FAAL = Answer + 2129
 url = f"https://ganjoor.net/t6e?p={FAAL}"
 URL = f"https://satinmod.com/ghazal-{Answer}"
+URL2 = f"https://hafez-fal.ir/ghazal/{Answer:03d}"
 
 def get_web_content(url):
     try:
@@ -32,6 +33,17 @@ def exclude_elements_by_id(html_content, id_to_exclude):
         div_to_exclude.decompose()
     return str(soup)
 
+def get_interpretation_url2(URL2):
+    page = requests.get(URL2)
+    if page.status_code != 200:
+        return [f"Failed to fetch page. Status code: {page.status_code}"]
+    soup = BeautifulSoup(page.content, "html.parser")
+    div = soup.find('div', class_='int-body')
+    if div:
+        text = div.get_text(separator='\n').strip()
+        return [text] if text else ["No content found in int-body."]
+    return ["int-body div not found."]
+
 def get_interpretation(URL):
     page = requests.get(URL)
     if page.status_code != 200:
@@ -44,7 +56,7 @@ def get_interpretation(URL):
         interpretations.append(element.get_text().strip())
     return interpretations
 
-def show_both_contents(url, URL,  width=800, height=600):
+def show_both_contents(url, URL, URL2, width=800, height=600):
     root = tk.Tk()
     root.title(f"غزل شمارۀ {Answer}")
     root.geometry(f"{width}x{height}")
@@ -53,6 +65,7 @@ def show_both_contents(url, URL,  width=800, height=600):
     text_widget.tag_configure("rtl", justify="right")
     content = get_web_content(url)
     interpretation_content = get_interpretation(URL)
+    interpretation_content2 = get_interpretation_url2(URL2)
 
     elements_to_exclude = ['head', 'a']
     modified_content = exclude_elements_by_id(content, id_to_exclude='t6e-footer')
@@ -65,7 +78,11 @@ def show_both_contents(url, URL,  width=800, height=600):
     for idx, interpretation in enumerate(interpretation_content, start=1):
         digit = persian_digits[idx - 1] if idx - 1 < len(persian_digits) else str(idx)
         text_widget.insert(tk.END, f"{rlm}{digit}. {interpretation}\n")
+    offset = len(interpretation_content)
+    for idx, interpretation in enumerate(interpretation_content2, start=1):
+        digit = persian_digits[offset + idx - 1] if offset + idx - 1 < len(persian_digits) else str(offset + idx)
+        text_widget.insert(tk.END, f"{rlm}{digit}. {interpretation}\n")
     text_widget.tag_add("rtl", "1.0", "end")
     root.mainloop()
 
-show_both_contents(url, URL, width=800, height=600)
+show_both_contents(url, URL, URL2, width=800, height=600)
