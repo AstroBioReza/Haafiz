@@ -77,11 +77,11 @@ def show_both_contents(url, URL, URL2, width=800, height=600):
     rlm = "\u200f"  # Right-to-left mark to keep numbers on the right
     for idx, interpretation in enumerate(interpretation_content, start=1):
         digit = persian_digits[idx - 1] if idx - 1 < len(persian_digits) else str(idx)
-        text_widget.insert(tk.END, f"{rlm}{digit}. {interpretation}\n")
+        text_widget.insert(tk.END, f"{rlm}{digit}. {interpretation}\n\n")
     offset = len(interpretation_content)
     for idx, interpretation in enumerate(interpretation_content2, start=1):
         digit = persian_digits[offset + idx - 1] if offset + idx - 1 < len(persian_digits) else str(offset + idx)
-        text_widget.insert(tk.END, f"{rlm}{digit}. {interpretation}\n")
+        text_widget.insert(tk.END, f"{rlm}{digit}. {interpretation}\n\n")
     text_widget.tag_add("rtl", "1.0", "end")
     root.mainloop()
 
