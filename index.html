@@ -92,7 +92,7 @@ document.getElementById('startButton').addEventListener('click', () => {
     add('h2', document.title).style.textAlign = 'center';
     const poemText = add('pre', entry.poem);
     poemText.style.fontSize = '16pt';
-    poemText.style.lineHeight = '1.8';
+    poemText.style.lineHeight = '1.4';
     container.append(document.createElement('hr'));
     for (const slot of [1, 2]) {
         if (slot === 2) container.append(document.createElement('hr'));
