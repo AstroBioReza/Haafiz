@@ -75,7 +75,7 @@ document.getElementById('startButton').addEventListener('click', () => {
     document.title = `غزل شمارۀ ${digits(entry.id)}`;
     container.replaceChildren();
     add('h2', document.title).style.textAlign = 'center';
-    add('pre', entry.poem);
+    add('pre', entry.poem).style.fontSize = '16pt';
     container.append(document.createElement('hr'));
     for (const slot of [1, 2]) {
         if (slot === 2) container.append(document.createElement('hr'));
